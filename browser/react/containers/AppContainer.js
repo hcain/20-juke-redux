@@ -8,6 +8,7 @@ import AUDIO from '../audio';
 import Sidebar from '../components/Sidebar';
 import Album from '../components/Album';
 import Player from '../components/Player';
+import AlbumsContainer from './AlbumsContainer';
 
 const convertSong = song => {
   song.audioUrl = `/api/songs/${song.id}/audio`;
@@ -113,7 +114,8 @@ export default class AppContainer extends Component {
           <Sidebar />
         </div>
         <div className="col-xs-10">
-          <Album 
+          <AlbumsContainer />
+          <Album
             album={this.state.album} 
             currentSong={this.state.currentSong}
             isPlaying={this.state.isPlaying}
