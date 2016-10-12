@@ -1,12 +1,18 @@
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import initialState from './initialState';
+import createLogger from 'redux-logger';
+import thunkMiddleware from 'redux-thunk';
 
-
-const Store = createStore(reducer);
+const logger = createLogger();
+const Store = createStore(reducer, applyMiddleware(logger, thunkMiddleware));
 
 
 const RECEIVE_ALBUMS_FROM_SERVER = 'RECEIVE_ALBUMS_FROM_SERVER';
-const action = { type: RECEIVE_ALBUMS_FROM_SERVER, albums: ['str'] };
+// const action = { type: RECEIVE_ALBUMS_FROM_SERVER, albums: ['str'] };
+
+const receiveAlbums = (albums) =>
+  ({ type: RECEIVE_ALBUMS_FROM_SERVER, albums }
+);
 
 function reducer (state = initialState, action) {
   switch (action.type) {
@@ -17,7 +23,7 @@ function reducer (state = initialState, action) {
 }
 
 Store.getState();
-Store.dispatch(action);
+// Store.dispatch(receiveAlbums);
 Store.getState();
 
-export default Store;
+export { Store, receiveAlbums };

@@ -35,7 +35,7 @@ export default class AppContainer extends Component {
   constructor (props) {
     super(props);
     this.state = initialState;
-    
+
     this.toggle = this.toggle.bind(this);
     this.toggleOne = this.toggleOne.bind(this);
     this.next = this.next.bind(this);
@@ -46,10 +46,10 @@ export default class AppContainer extends Component {
     fetch('/api/albums/1')
       .then(res => res.json())
       .then(album => this.onLoad(convertAlbum(album)));
-    
-    AUDIO.addEventListener('ended', () => 
+
+    AUDIO.addEventListener('ended', () =>
       this.next());
-    AUDIO.addEventListener('timeupdate', () => 
+    AUDIO.addEventListener('timeupdate', () =>
       this.setProgress(AUDIO.currentTime / AUDIO.duration));
   }
 
@@ -115,12 +115,6 @@ export default class AppContainer extends Component {
         </div>
         <div className="col-xs-10">
           <AlbumsContainer />
-          <Album
-            album={this.state.album} 
-            currentSong={this.state.currentSong}
-            isPlaying={this.state.isPlaying}
-            toggle={this.toggleOne}
-          />
         </div>
         <Player
           currentSong={this.state.currentSong}
@@ -130,9 +124,15 @@ export default class AppContainer extends Component {
           next={this.next}
           prev={this.prev}
           toggle={this.toggle}
-          scrub={evt => this.seek(evt.nativeEvent.offsetX / evt.target.clientWidth)} 
+          scrub={evt => this.seek(evt.nativeEvent.offsetX / evt.target.clientWidth)}
         />
       </div>
     );
   }
 }
+// <Album
+//   album={this.state.album}
+//   currentSong={this.state.currentSong}
+//   isPlaying={this.state.isPlaying}
+//   toggle={this.toggleOne}
+// />

@@ -1,12 +1,13 @@
 import { connect } from 'react-redux';
 import { react } from 'react';
 import Albums from '../components/Albums';
+import { receiveAlbums } from '../myRedux';
 
-const mapStateToProps = (state, props) => {albums: state.albums};
+const mapStateToProps = (state, props) => ({albums: state.albums});
 
 const mapDispatchToProps = (dispatch, props) => ({
     loadAlbums (albums) {
-        dispatch({type: RECEIVE_ALBUMS_FROM_SERVER, albums: albums});
+        dispatch(receiveAlbums(albums));
     }
 });
 
