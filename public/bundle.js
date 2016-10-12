@@ -23567,7 +23567,7 @@
 /* 204 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -23597,46 +23597,48 @@
 	  }
 	
 	  _createClass(Albums, [{
-	    key: "componentDidMount",
+	    key: 'componentDidMount',
 	    value: function componentDidMount() {
 	      this.props.loadAlbums();
 	    }
 	  }, {
-	    key: "render",
+	    key: 'render',
 	    value: function render() {
+	      console.log('ALBUMS', this.props.albums);
+	      console.log('PROPS', this.props);
 	      return _react2.default.createElement(
-	        "div",
+	        'div',
 	        null,
 	        _react2.default.createElement(
-	          "h3",
+	          'h3',
 	          null,
-	          "Albums"
+	          'Albums'
 	        ),
 	        _react2.default.createElement(
-	          "div",
-	          { className: "row" },
+	          'div',
+	          { className: 'row' },
 	          this.props.albums.map(function (album) {
 	            return _react2.default.createElement(
-	              "div",
-	              { className: "col-xs-4", key: album.id },
+	              'div',
+	              { className: 'col-xs-4', key: album.id },
 	              _react2.default.createElement(
-	                "a",
-	                { className: "thumbnail", href: "#" },
-	                _react2.default.createElement("img", { src: album.imageUrl }),
+	                'a',
+	                { className: 'thumbnail', href: '#' },
+	                _react2.default.createElement('img', { src: album.imageUrl }),
 	                _react2.default.createElement(
-	                  "div",
-	                  { className: "caption" },
+	                  'div',
+	                  { className: 'caption' },
 	                  _react2.default.createElement(
-	                    "h5",
+	                    'h5',
 	                    null,
 	                    _react2.default.createElement(
-	                      "span",
+	                      'span',
 	                      null,
 	                      album.name
 	                    )
 	                  ),
 	                  _react2.default.createElement(
-	                    "small",
+	                    'small',
 	                    null,
 	                    album.songs.length,
 	                    album.songs.length === 1 ? ' song' : ' songs'
@@ -23673,10 +23675,6 @@
 	
 	var _redux = __webpack_require__(41);
 	
-	var _initialState = __webpack_require__(197);
-	
-	var _initialState2 = _interopRequireDefault(_initialState);
-	
 	var _reduxLogger = __webpack_require__(206);
 	
 	var _reduxLogger2 = _interopRequireDefault(_reduxLogger);
@@ -23687,9 +23685,15 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var logger = (0, _reduxLogger2.default)();
-	var Store = (0, _redux.createStore)(reducer, (0, _redux.applyMiddleware)(logger, _reduxThunk2.default));
+	var mainReducer = (0, _redux.combineReducers)({
+	  albums: albumReducer
+	});
 	
+	// creating store and passing it middleware for logging and treating action creators as functions
+	var logger = (0, _reduxLogger2.default)();
+	var Store = (0, _redux.createStore)(mainReducer, (0, _redux.applyMiddleware)(logger, _reduxThunk2.default));
+	
+	// helper functions for dealing with albums
 	var convertSong = function convertSong(song) {
 	  song.audioUrl = '/api/songs/' + song.id + '/audio';
 	  return song;
@@ -23701,13 +23705,19 @@
 	  return album;
 	};
 	
+	// action types
 	var RECEIVE_ALBUMS_FROM_SERVER = 'RECEIVE_ALBUMS_FROM_SERVER';
+	var START_PLAYING = 'START_PLAYING';
+	var STOP_PLAYING = 'STOP_PLAYING';
+	var SET_CURRENT_SONG = 'SET_CURRENT_SONG';
 	
+	// action creator that is dispatched and gets albums
 	var receiveAlbums = function receiveAlbums(albums) {
 	  return { type: RECEIVE_ALBUMS_FROM_SERVER,
 	    albums: albums };
 	};
 	
+	// action creator that fetches albums from server and calls receiveAlbums
 	var fetchAlbumsFromServer = function fetchAlbumsFromServer() {
 	  return function (dispatch) {
 	    fetch('api/albums').then(function (res) {
@@ -23720,21 +23730,22 @@
 	  };
 	};
 	
-	function reducer() {
-	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _initialState2.default;
+	// reducer functions
+	function albumReducer() {
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 	  var action = arguments[1];
 	
 	  switch (action.type) {
 	    case RECEIVE_ALBUMS_FROM_SERVER:
-	      return Object.assign({}, state, { albums: action.albums });
+	      // return Object.assign({}, state, action.albums);
+	      return action.albums.slice(0);
 	    default:
 	      return state;
 	  }
 	}
 	
-	Store.getState();
-	// Store.dispatch(receiveAlbums);
-	Store.getState();
+	// Store.getState();
+	// Store.getState();
 	
 	exports.Store = Store;
 	exports.receiveAlbums = receiveAlbums;

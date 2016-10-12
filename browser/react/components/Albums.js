@@ -14,6 +14,8 @@ export default class Albums extends React.Component {
 
 
     render() {
+      console.log('ALBUMS', this.props.albums)
+      console.log('PROPS', this.props)
       return (
       <div>
       <h3>Albums</h3>

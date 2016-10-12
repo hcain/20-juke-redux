@@ -1,11 +1,14 @@
-import { createStore, applyMiddleware } from 'redux';
-import initialState from './initialState';
+import { createStore, applyMiddleware, combineReducers } from 'redux';
 import createLogger from 'redux-logger';
 import thunkMiddleware from 'redux-thunk';
 
+var mainReducer = combineReducers({
+  albums: albumReducer
+})
+
 // creating store and passing it middleware for logging and treating action creators as functions
 const logger = createLogger();
-const Store = createStore(reducer, applyMiddleware(logger, thunkMiddleware));
+const Store = createStore(mainReducer, applyMiddleware(logger, thunkMiddleware));
 
 // helper functions for dealing with albums
 const convertSong = song => {
@@ -19,7 +22,11 @@ const convertAlbum = album => {
   return album;
   }
 
+// action types
 const RECEIVE_ALBUMS_FROM_SERVER = 'RECEIVE_ALBUMS_FROM_SERVER';
+const START_PLAYING = 'START_PLAYING';
+const STOP_PLAYING = 'STOP_PLAYING';
+const SET_CURRENT_SONG = 'SET_CURRENT_SONG';
 
 // action creator that is dispatched and gets albums
 const receiveAlbums = (albums) =>
@@ -37,16 +44,18 @@ const fetchAlbumsFromServer = () => {
   }
 }
 
-// reducer function
-function reducer (state = initialState, action) {
+// reducer functions
+function albumReducer (state = [], action) {
   switch (action.type) {
     case RECEIVE_ALBUMS_FROM_SERVER:
-      return Object.assign({}, state, { albums: action.albums });
+      // return Object.assign({}, state, action.albums);
+      return action.albums.slice(0)
     default: return state;
   }
 }
 
-Store.getState();
-Store.getState();
+
+// Store.getState();
+// Store.getState();
 
 export { Store, receiveAlbums, fetchAlbumsFromServer };
