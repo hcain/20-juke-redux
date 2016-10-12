@@ -23553,8 +23553,8 @@
 	
 	var mapDispatchToProps = function mapDispatchToProps(dispatch, props) {
 	    return {
-	        loadAlbums: function loadAlbums(albums) {
-	            dispatch((0, _myRedux.receiveAlbums)(albums));
+	        loadAlbums: function loadAlbums() {
+	            dispatch((0, _myRedux.fetchAlbumsFromServer)());
 	        }
 	    };
 	};
@@ -23567,7 +23567,7 @@
 /* 204 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -23587,17 +23587,6 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var convertSong = function convertSong(song) {
-	  song.audioUrl = '/api/songs/' + song.id + '/audio';
-	  return song;
-	};
-	
-	var convertAlbum = function convertAlbum(album) {
-	  album.imageUrl = '/api/albums/' + album.id + '/image';
-	  album.songs = album.songs.map(convertSong);
-	  return album;
-	};
-	
 	var Albums = function (_React$Component) {
 	  _inherits(Albums, _React$Component);
 	
@@ -23608,54 +23597,49 @@
 	  }
 	
 	  _createClass(Albums, [{
-	    key: 'componentDidMount',
+	    key: "componentDidMount",
 	    value: function componentDidMount() {
-	      var _this2 = this;
-	
-	      fetch('/api/albums').then(function (res) {
-	        return res.json();
-	      }).then(function (albums) {
-	        return _this2.props.loadAlbums(albums.map(convertAlbum));
-	      });
+	      this.props.loadAlbums();
 	    }
 	  }, {
-	    key: 'render',
+	    key: "render",
 	    value: function render() {
 	      return _react2.default.createElement(
-	        'div',
+	        "div",
 	        null,
 	        _react2.default.createElement(
-	          'h3',
+	          "h3",
 	          null,
-	          'Albums'
+	          "Albums"
 	        ),
 	        _react2.default.createElement(
-	          'div',
-	          { className: 'row' },
+	          "div",
+	          { className: "row" },
 	          this.props.albums.map(function (album) {
 	            return _react2.default.createElement(
-	              'div',
-	              { className: 'col-xs-4', key: album.id },
+	              "div",
+	              { className: "col-xs-4", key: album.id },
 	              _react2.default.createElement(
-	                'a',
-	                { className: 'thumbnail', href: '#' },
-	                _react2.default.createElement('img', { src: album.imageUrl }),
+	                "a",
+	                { className: "thumbnail", href: "#" },
+	                _react2.default.createElement("img", { src: album.imageUrl }),
 	                _react2.default.createElement(
-	                  'div',
-	                  { className: 'caption' },
+	                  "div",
+	                  { className: "caption" },
 	                  _react2.default.createElement(
-	                    'h5',
+	                    "h5",
 	                    null,
 	                    _react2.default.createElement(
-	                      'span',
+	                      "span",
 	                      null,
 	                      album.name
 	                    )
 	                  ),
 	                  _react2.default.createElement(
-	                    'small',
+	                    "small",
 	                    null,
-	                    'NUMBER OF SONGS HERE songs'
+	                    album.songs.length,
+	                    album.songs.length === 1 ? ' song' : ' songs'
 	                  )
 	                )
 	              )
@@ -23669,6 +23653,11 @@
 	  return Albums;
 	}(_react2.default.Component);
 	
+	// fetch('/api/albums')
+	//   .then(res => res.json())
+	//   .then(albums => this.props.loadAlbums(albums.map(convertAlbum)));
+	
+	
 	exports.default = Albums;
 
 /***/ },
@@ -23680,7 +23669,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.receiveAlbums = exports.Store = undefined;
+	exports.fetchAlbumsFromServer = exports.receiveAlbums = exports.Store = undefined;
 	
 	var _redux = __webpack_require__(41);
 	
@@ -23701,11 +23690,34 @@
 	var logger = (0, _reduxLogger2.default)();
 	var Store = (0, _redux.createStore)(reducer, (0, _redux.applyMiddleware)(logger, _reduxThunk2.default));
 	
+	var convertSong = function convertSong(song) {
+	  song.audioUrl = '/api/songs/' + song.id + '/audio';
+	  return song;
+	};
+	
+	var convertAlbum = function convertAlbum(album) {
+	  album.imageUrl = '/api/albums/' + album.id + '/image';
+	  album.songs = album.songs.map(convertSong);
+	  return album;
+	};
+	
 	var RECEIVE_ALBUMS_FROM_SERVER = 'RECEIVE_ALBUMS_FROM_SERVER';
-	// const action = { type: RECEIVE_ALBUMS_FROM_SERVER, albums: ['str'] };
 	
 	var receiveAlbums = function receiveAlbums(albums) {
-	  return { type: RECEIVE_ALBUMS_FROM_SERVER, albums: albums };
+	  return { type: RECEIVE_ALBUMS_FROM_SERVER,
+	    albums: albums };
+	};
+	
+	var fetchAlbumsFromServer = function fetchAlbumsFromServer() {
+	  return function (dispatch) {
+	    fetch('api/albums').then(function (res) {
+	      return res.json();
+	    }).then(function (albums) {
+	      return albums.map(convertAlbum);
+	    }).then(function (arrayOfAlbums) {
+	      return dispatch(receiveAlbums(arrayOfAlbums));
+	    });
+	  };
 	};
 	
 	function reducer() {
@@ -23726,6 +23738,7 @@
 	
 	exports.Store = Store;
 	exports.receiveAlbums = receiveAlbums;
+	exports.fetchAlbumsFromServer = fetchAlbumsFromServer;
 
 /***/ },
 /* 206 */

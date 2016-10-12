@@ -1,15 +1,5 @@
 import React from 'react';
 
-const convertSong = song => {
-  song.audioUrl = `/api/songs/${song.id}/audio`;
-  return song;
-};
-
-const convertAlbum = album => {
-  album.imageUrl = `/api/albums/${album.id}/image`;
-  album.songs = album.songs.map(convertSong);
-  return album;
-  }
 
 
 export default class Albums extends React.Component {
@@ -19,10 +9,9 @@ export default class Albums extends React.Component {
     }
 
   componentDidMount () {
-    fetch('/api/albums')
-      .then(res => res.json())
-      .then(albums => this.props.loadAlbums(albums.map(convertAlbum)));
+    this.props.loadAlbums();
   }
+
 
     render() {
       return (
@@ -38,7 +27,8 @@ export default class Albums extends React.Component {
                     <h5>
                         <span>{album.name}</span>
                     </h5>
-                    <small>NUMBER OF SONGS HERE songs</small>
+                    <small>{album.songs.length}
+                    {album.songs.length === 1 ? ' song':' songs'}</small>
                     </div>
                 </a>
                 </div>
@@ -50,3 +40,8 @@ export default class Albums extends React.Component {
     }
 
 }
+
+
+// fetch('/api/albums')
+//   .then(res => res.json())
+//   .then(albums => this.props.loadAlbums(albums.map(convertAlbum)));
