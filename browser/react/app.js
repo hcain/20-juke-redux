@@ -11,5 +11,5 @@ import Store from './myRedux';
 ReactDOM.render(
   <Provider store={Store}>
     <AppContainer />
-  </Provider>
+  </Provider>, document.getElementById('app')
 );

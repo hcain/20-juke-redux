@@ -4,9 +4,11 @@ import Albums from '../components/Albums';
 
 const mapStateToProps = (state, props) => {albums: state.albums};
 
-const mapDispatchToProps = (dispatch, props) => {loadAlbums (albums) {
-    dispatch({type: RECEIVE_ALBUMS_FORM_SERVER, albums: albums});
-}}
+const mapDispatchToProps = (dispatch, props) => ({
+    loadAlbums (albums) {
+        dispatch({type: RECEIVE_ALBUMS_FROM_SERVER, albums: albums});
+    }
+});
 
 const AlbumsContainer = connect (
     mapStateToProps,
